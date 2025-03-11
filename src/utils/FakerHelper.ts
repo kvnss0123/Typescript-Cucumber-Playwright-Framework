@@ -1,9 +1,10 @@
-// File: src/utils/FakerHelper.ts
-import { faker } from '@faker-js/faker';
+import { faker, Sex } from '@faker-js/faker';
 
 export class FakerHelper {
     static getBusinessName() {
-        return faker.company.name();
+        return {
+            companyName: faker.company.name()
+        };
     }
 
     static getAddress() {
@@ -15,34 +16,40 @@ export class FakerHelper {
         };
     }
 
-    static getPersonName() {
-        return {
-            firstName: faker.person.firstName(),
-            lastName: faker.person.lastName()
-        };
-    }
-    static getPhoneNumber() {
-        return faker.phone.number();
-    }
+    static getPerson() {
+        const sex = faker.person.sexType();
+        const firstName = faker.person.firstName(sex);
+        const lastName = faker.person.lastName();
+        const email = faker.internet.email({ firstName, lastName });
+        const dateOfBirth = faker.date.birthdate();
+        const phoneNumber = faker.phone.number();
 
-    static getEmail(firstName?: string, lastName?: string) {
-        if (firstName && lastName) {
-            return faker.internet.email({ firstName, lastName }).toLowerCase();
+        return {
+            sex,
+            firstName,
+            lastName,
+            email,
+            dateOfBirth,
+            phoneNumber
         }
-        return faker.internet.email().toLowerCase();
     }
 
     static getVIN() {
         return faker.vehicle.vin();
     }
 
-    static getVehicleDetails() {
+    static getVehicle() {
+        const vin = faker.vehicle.vin();
+        const make = faker.vehicle.manufacturer();
+        const model = faker.vehicle.model();
+        const year = faker.date.past({ years: 10 }).getFullYear().toString();
+        const costNew = faker.number.int({ min: 20000, max: 80000 }).toString();
         return {
-            make: faker.vehicle.manufacturer(),
-            model: faker.vehicle.model(),
-            year: faker.date.past({ years: 10 }).getFullYear().toString(),
-            vin: faker.vehicle.vin(),
-            costNew: faker.number.int({ min: 20000, max: 80000 }).toString()
+            make,
+            model,
+            year,
+            vin,
+            costNew
         };
     }
 

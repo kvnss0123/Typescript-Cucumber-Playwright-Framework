@@ -1,4 +1,3 @@
-// File: src/pages/commercialAuto/CAPolicyInfoPage.ts
 import { Page } from '@playwright/test';
 import { BasePage } from '../BasePage';
 
@@ -16,17 +15,17 @@ export class CAPolicyInfoPage extends BasePage {
   async fillPolicyInfo(policyData: any) {
     this.logger.info('Filling CA policy information');
 
-    await this.fillField(this.effectiveDateField, policyData.effectiveDate);
+    await this.fillInputField(this.effectiveDateField, policyData.effectiveDate);
 
     if (policyData.expirationDate) {
-      await this.fillField(this.expirationDateField, policyData.expirationDate);
+      await this.fillInputField(this.expirationDateField, policyData.expirationDate);
     }
 
-    await this.selectDropdownOption(this.businessTypeDropdown, policyData.businessType);
-    await this.fillField(this.yearsInBusinessField, policyData.yearsInBusiness);
-    await this.fillField(this.numEmployeesField, policyData.numEmployees);
+    await this.selectOption(this.businessTypeDropdown, policyData.businessType);
+    await this.fillInputField(this.yearsInBusinessField, policyData.yearsInBusiness);
+    await this.fillInputField(this.numEmployeesField, policyData.numEmployees);
 
     // Click Next to continue
-    await this.clickButton(this.nextButton);
+    await this.click(this.nextButton);
   }
 }

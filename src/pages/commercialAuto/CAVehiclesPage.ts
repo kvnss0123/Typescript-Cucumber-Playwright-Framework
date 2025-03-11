@@ -1,4 +1,3 @@
-// File: src/pages/commercialAuto/CAVehiclesPage.ts
 import { Page } from '@playwright/test';
 import { BasePage } from '../BasePage';
 
@@ -19,21 +18,21 @@ export class CAVehiclesPage extends BasePage {
   async addVehicle(vehicleData: any) {
     this.logger.info('Adding CA vehicle');
 
-    await this.clickButton(this.addVehicleButton, { waitForNavigation: true });
+    await this.click(this.addVehicleButton, { waitForNavigation: true });
 
-    await this.fillField(this.vinField, vehicleData.vin);
-    await this.fillField(this.yearField, vehicleData.year);
-    await this.fillField(this.makeField, vehicleData.make);
-    await this.fillField(this.modelField, vehicleData.model);
-    await this.fillField(this.costNewField, vehicleData.costNew);
-    await this.selectDropdownOption(this.vehicleTypeDropdown, vehicleData.vehicleType);
+    await this.fillInputField(this.vinField, vehicleData.vin);
+    await this.fillInputField(this.yearField, vehicleData.year);
+    await this.fillInputField(this.makeField, vehicleData.make);
+    await this.fillInputField(this.modelField, vehicleData.model);
+    await this.fillInputField(this.costNewField, vehicleData.costNew);
+    await this.selectOption(this.vehicleTypeDropdown, vehicleData.vehicleType);
 
-    await this.clickButton(this.okButton);
+    await this.click(this.okButton);
 
     // Verify vehicle was added
     await this.verifyText('div[id*="VehiclesLV-body"]', vehicleData.vin);
 
     // Click Next to continue
-    await this.clickButton(this.nextButton);
+    await this.click(this.nextButton);
   }
 }

@@ -1,4 +1,3 @@
-// File: src/utils/PolicyNumberGenerator.ts
 export class PolicyNumberGenerator {
     private static prefixes = {
       businessowners: 'BOP',

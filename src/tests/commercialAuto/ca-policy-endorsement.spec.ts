@@ -1,4 +1,3 @@
-// File: src/tests/commercialAuto/ca-policy-endorsement.spec.ts
 import { test } from '../../core/BaseTest';
 import { CAVehiclesPage } from '../../pages/commercialAuto/CAVehiclesPage';
 import { FakerHelper } from '../../utils/FakerHelper';

@@ -1,4 +1,3 @@
-// File: src/tests/businessowners/bop-policy-creation.spec.ts
 import { test } from '../../core/BaseTest';
 import { BOPPolicyInfoPage } from '../../pages/businessowners/BOPPolicyInfoPage';
 import { BOPLocationsPage } from '../../pages/businessowners/BOPLocationsPage';

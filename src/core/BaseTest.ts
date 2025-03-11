@@ -1,4 +1,3 @@
-// File: src/core/BaseTest.ts
 import { test as base, Page } from '@playwright/test';
 import { LoginPage } from '../pages/common/LoginPage';
 import { HeaderPage } from '../pages/common/HeaderPage';

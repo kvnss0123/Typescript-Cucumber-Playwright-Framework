@@ -1,4 +1,3 @@
-// File: src/tests/businessowners/bop-policy-endorsement.spec.ts
 import { test } from '../../core/BaseTest';
 import { BOPLocationsPage } from '../../pages/businessowners/BOPLocationsPage';
 import { FakerHelper } from '../../utils/FakerHelper';

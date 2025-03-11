@@ -1,4 +1,3 @@
-// File: src/pages/businessowners/BOPCoveragesPage.ts
 import { Page } from '@playwright/test';
 import { BasePage } from '../BasePage';
 
@@ -14,11 +13,11 @@ export class BOPCoveragesPage extends BasePage {
   async selectCoverages(coverageData: any) {
     this.logger.info('Selecting BOP coverages');
 
-    await this.selectDropdownOption(this.liabilityLimitDropdown, coverageData.liabilityLimit);
-    await this.selectDropdownOption(this.medicalPaymentsLimitDropdown, coverageData.medicalPaymentsLimit);
-    await this.selectDropdownOption(this.deductibleDropdown, coverageData.deductible);
+    await this.selectOption(this.liabilityLimitDropdown, coverageData.liabilityLimit);
+    await this.selectOption(this.medicalPaymentsLimitDropdown, coverageData.medicalPaymentsLimit);
+    await this.selectOption(this.deductibleDropdown, coverageData.deductible);
 
     // Click Next to continue
-    await this.clickButton(this.nextButton);
+    await this.click(this.nextButton);
   }
 }

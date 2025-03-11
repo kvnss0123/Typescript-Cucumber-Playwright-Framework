@@ -1,34 +1,57 @@
-// File: src/pages/businessowners/BOPPolicyInfoPage.ts
 import { Page } from '@playwright/test';
 import { BasePage } from '../BasePage';
 
 export class BOPPolicyInfoPage extends BasePage {
-  private effectiveDateField = 'input[name*="EffectiveDate"]';
-  private expirationDateField = 'input[name*="ExpirationDate"]';
-  private organizationTypeDropdown = 'select[name*="OrganizationType"]';
-  private annualRevenueField = 'input[name*="AnnualRevenue"]';
-  private numEmployeesField = 'input[name*="NumEmployees"]';
-  private yearsInBusinessField = 'input[name*="YearsInBusiness"]';
+    // Locators for BOP PolicyInfo page
+    private effectiveDateField = 'input[name*="EffectiveDate"]';
+    private expirationDateField = 'input[name*="ExpirationDate"]';
+    private organizationTypeDropdown = 'select[name*="OrganizationType"]';
+    private annualRevenueField = 'input[name*="AnnualRevenue"]';
+    private numEmployeesField = 'input[name*="NumEmployees"]';
+    private yearsInBusinessField = 'input[name*="YearsInBusiness"]';
 
-  constructor(page: Page) {
-    super(page);
-  }
-
-  async fillPolicyInfo(policyData: any) {
-    this.logger.info('Filling BOP policy information');
-
-    await this.fillField(this.effectiveDateField, policyData.effectiveDate);
-
-    if (policyData.expirationDate) {
-      await this.fillField(this.expirationDateField, policyData.expirationDate);
+    constructor(page: Page) {
+        super(page);
     }
 
-    await this.selectDropdownOption(this.organizationTypeDropdown, policyData.organizationType);
-    await this.fillField(this.annualRevenueField, policyData.annualRevenue);
-    await this.fillField(this.numEmployeesField, policyData.numEmployees);
-    await this.fillField(this.yearsInBusinessField, policyData.yearsInBusiness);
+    /**
+   * Fills out the BOP policy information form.
+   * @param policyData - An object containing the policy information to fill out.
+   */
+    async fillPolicyInfo(policyData: {
+        effectiveDate?: string;
+        expirationDate?: string;
+        organizationType: string;
+        annualRevenue?: string;
+        numEmployees?: string;
+        yearOfBusiness?: string;
+    }): Promise<void> {
+        this.logger.info('Filling BOP policy information');
 
-    // Click Next to continue
-    await this.clickButton(this.nextButton);
-  }
+        try {
+            if (policyData.effectiveDate) {
+                await this.fillInputField(this.effectiveDateField, policyData.effectiveDate);
+            }
+
+            if (policyData.expirationDate) {
+                await this.fillInputField(this.expirationDateField, policyData.expirationDate);
+            }
+
+            if (policyData.yearOfBusiness) {
+                await this.fillInputField(this.yearsInBusinessField, policyData.yearOfBusiness);
+            }
+
+            await this.selectOption(this.organizationTypeDropdown, policyData.organizationType);
+
+            // Click Next to continue
+            await this.click(this.nextButton);
+            // Wait for the next page to load
+            await this.waitForPageLoad();
+
+            this.logger.info('BOP policy information filled successfully');
+        } catch (error) {
+            this.logger.error(`Failed to fill BOP policy information: ${error}`);
+            throw error;
+        }
+    }
 }

@@ -1,55 +1,76 @@
-// File: src/utils/ElementHelper.ts
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 import { Logger } from '../core/Logger';
 
 export class ElementHelper {
-  private page: Page;
-  private logger: Logger;
+    protected page: Page;
+    protected logger: Logger;
+    protected defaultTimeout: number;
 
-  constructor(page: Page) {
-    this.page = page;
-    this.logger = new Logger();
-  }
-
-  async waitForSelector(selector: string, timeout = 30000) {
-    this.logger.info(`Waiting for selector: ${selector}`);
-    return await this.page.waitForSelector(selector, { timeout });
-  }
-
-  async waitForNetworkIdle(timeout = 30000) {
-    this.logger.info('Waiting for network idle');
-    return await this.page.waitForLoadState('networkidle', { timeout });
-  }
-
-  async scrollIntoView(selector: string) {
-    this.logger.info(`Scrolling ${selector} into view`);
-    const element = await this.page.$(selector);
-    if (element) {
-      await element.scrollIntoViewIfNeeded();
+    constructor(page: Page, defaultTimeout: number = 30000) {
+        this.page = page;
+        this.logger = new Logger();
+        this.defaultTimeout = defaultTimeout;
     }
-  }
 
-  async getElementText(selector: string) {
-    const element = await this.page.$(selector);
-    if (element) {
-      return await element.textContent();
+    /**
+     * Waits for a selector to be present in the DOM.
+     * @param selector - The selector to wait for.
+     * @param timeout - Maximum time to wait in milliseconds.
+     */
+    async waitForSelector(selector: string, timeout: number = this.defaultTimeout): Promise<Locator> {
+        this.logger.info(`Waiting for selector: ${selector}`);
+        await this.page.waitForSelector(selector, { timeout });
+        return this.page.locator(selector);
     }
-    return null;
-  }
 
-  async isElementVisible(selector: string) {
-    const element = await this.page.$(selector);
-    if (element) {
-      return await element.isVisible();
+    /**
+     * Waits for the network to be idle.
+     * @param timeout - Maximum time to wait in milliseconds.
+     */
+    async waitForNetworkIdle(timeout: number = this.defaultTimeout): Promise<void> {
+        this.logger.info('Waiting for network idle');
+        await this.page.waitForLoadState('networkidle', { timeout });
     }
-    return false;
-  }
 
-  async getAttributeValue(selector: string, attribute: string) {
-    const element = await this.page.$(selector);
-    if (element) {
-      return await element.getAttribute(attribute);
+    /**
+     * Scrolls an element into view.
+     * @param selector - The selector of the element to scroll into view.
+     */
+    async scrollIntoView(selector: string): Promise<void> {
+        this.logger.info(`Scrolling ${selector} into view`);
+        const element = this.page.locator(selector);
+        await element.scrollIntoViewIfNeeded();
     }
-    return null;
-  }
+
+    /**
+     * Retrieves the text content of an element.
+     * @param selector - The selector of the element.
+     * @returns The text content of the element, or null if the element is not found.
+     */
+    async getElementText(selector: string): Promise<string | null> {
+        const element = this.page.locator(selector);
+        return await element.textContent();
+    }
+
+    /**
+     * Checks if an element is visible.
+     * @param selector - The selector of the element.
+     * @returns True if the element is visible, false otherwise.
+     */
+    async isElementVisible(selector: string): Promise<boolean> {
+        const element = this.page.locator(selector);
+        return await element.isVisible();
+    }
+
+    /**
+     * Retrieves the value of an attribute from an element.
+     * @param selector - The selector of the element.
+     * @param attribute - The attribute to retrieve.
+     * @returns The attribute value, or null if the element or attribute is not found.
+     */
+    async getAttributeValue(selector: string, attribute: string): Promise<string | null> {
+        const element = this.page.locator(selector);
+        return await element.getAttribute(attribute);
+    }
+
 }

@@ -1,4 +1,3 @@
-// File: src/core/Logger.ts
 import winston from 'winston';
 import path from 'path';
 

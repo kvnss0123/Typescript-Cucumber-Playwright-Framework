@@ -1,4 +1,3 @@
-// File: src/utils/Reporter.ts
 import { Reporter, TestCase, TestResult } from '@playwright/test/reporter';
 import fs from 'fs';
 import path from 'path';

@@ -1,4 +1,3 @@
-// File: src/tests/commercialAuto/ca-policy-creation.spec.ts
 import { test } from '../../core/BaseTest';
 import { CAPolicyInfoPage } from '../../pages/commercialAuto/CAPolicyInfoPage';
 import { CAVehiclesPage } from '../../pages/commercialAuto/CAVehiclesPage';
