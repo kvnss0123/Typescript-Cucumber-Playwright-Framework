@@ -1,0 +1,8 @@
+# File: src/data/testdata.yaml
+username: "su"
+password: "gw"
+timeouts:
+  default: 30000
+  long: 60000
+  short: 10000
+retries: 2

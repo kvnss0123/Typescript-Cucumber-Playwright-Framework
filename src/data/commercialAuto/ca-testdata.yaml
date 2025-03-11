@@ -1,0 +1,28 @@
+# File: src/data/commercialAuto/ca-testdata.yaml
+---
+policyInfo:
+  effectiveDate: "{{faker.date.future}}"
+  businessType: "Corporation"
+  yearsInBusiness: "{{faker.number.int({min: 1, max: 20})}}"
+  numEmployees: "{{faker.number.int({min: 5, max: 50})}}"
+
+vehicles:
+  - vin: "{{faker.vehicle.vin}}"
+    year: "{{faker.date.past().getFullYear()}}"
+    make: "{{faker.vehicle.manufacturer}}"
+    model: "{{faker.vehicle.model}}"
+    costNew: "{{faker.number.int({min: 20000, max: 80000})}}"
+    vehicleType: "Commercial"
+  - vin: "{{faker.vehicle.vin}}"
+    year: "{{faker.date.past().getFullYear()}}"
+    make: "{{faker.vehicle.manufacturer}}"
+    model: "{{faker.vehicle.model}}"
+    costNew: "{{faker.number.int({min: 20000, max: 80000})}}"
+    vehicleType: "Commercial"
+
+coverages:
+  liabilityLimit: "$1,000,000"
+  medicalPayments: "$5,000"
+  uninsuredMotorist: "$1,000,000"
+  comprehensiveDeductible: "$500"
+  collisionDeductible: "$1,000"
