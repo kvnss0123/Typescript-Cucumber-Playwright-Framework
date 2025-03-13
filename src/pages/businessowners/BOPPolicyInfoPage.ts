@@ -1,17 +1,25 @@
-import { Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 import { BasePage } from '../BasePage';
 
 export class BOPPolicyInfoPage extends BasePage {
     // Locators for BOP PolicyInfo page
-    private effectiveDateField = 'input[name*="EffectiveDate"]';
-    private expirationDateField = 'input[name*="ExpirationDate"]';
-    private organizationTypeDropdown = 'select[name*="OrganizationType"]';
-    private annualRevenueField = 'input[name*="AnnualRevenue"]';
-    private numEmployeesField = 'input[name*="NumEmployees"]';
-    private yearsInBusinessField = 'input[name*="YearsInBusiness"]';
+    private effectiveDateField: Locator;
+    private expirationDateField: Locator;
+    private organizationTypeDropdown: Locator;
+    private annualRevenueField: Locator;
+    private numEmployeesField: Locator;
+    private yearsInBusinessField: Locator;
 
     constructor(page: Page) {
         super(page);
+
+        // Initialize locators using page.locator()
+        this.effectiveDateField = this.page.locator('input[name*="EffectiveDate"]');
+        this.expirationDateField = this.page.locator('input[name*="ExpirationDate"]');
+        this.organizationTypeDropdown = this.page.locator('select[name*="OrganizationType"]');
+        this.annualRevenueField = this.page.locator('input[name*="AnnualRevenue"]');
+        this.numEmployeesField = this.page.locator('input[name*="NumEmployees"]');
+        this.yearsInBusinessField = this.page.locator('input[name*="YearsInBusiness"]');
     }
 
     /**

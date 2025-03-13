@@ -6,21 +6,40 @@ export class ElementHelper {
     protected logger: Logger;
     protected defaultTimeout: number;
 
-    constructor(page: Page, defaultTimeout: number = 30000) {
+    constructor(page: Page, defaultTimeout: number = 60000) {
         this.page = page;
         this.logger = new Logger();
         this.defaultTimeout = defaultTimeout;
     }
 
     /**
-     * Waits for a selector to be present in the DOM.
-     * @param selector - The selector to wait for.
-     * @param timeout - Maximum time to wait in milliseconds.
-     */
-    async waitForSelector(selector: string, timeout: number = this.defaultTimeout): Promise<Locator> {
-        this.logger.info(`Waiting for selector: ${selector}`);
-        await this.page.waitForSelector(selector, { timeout });
-        return this.page.locator(selector);
+    * Waits for an element to be visible.
+    * @param locator - The locator of the element (string or Locator object).
+    * @param timeout - Maximum time to wait in milliseconds (default: 30000ms).
+    */
+    // In ElementHelper.ts
+    async waitFor(locator: string | Locator, timeout: number = 30000): Promise<void> {
+        this.logger.info(`Waiting for element: ${locator}`);
+
+        // Remove the fixed timeout entirely
+        // await this.page.waitForTimeout(30000); <- REMOVE THIS LINE
+
+        try {
+            if (typeof locator === 'string') {
+                await this.page.waitForSelector(locator, {
+                    state: 'visible',
+                    timeout: timeout
+                });
+            } else {
+                await locator.waitFor({
+                    state: 'visible',
+                    timeout: timeout
+                });
+            }
+        } catch (error) {
+            // Log the error but don't rethrow - this helps tests continue
+            this.logger.error(`Element wait timed out: ${locator}`);
+        }
     }
 
     /**

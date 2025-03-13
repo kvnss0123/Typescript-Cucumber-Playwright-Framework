@@ -1,0 +1,52 @@
+import { Page, Locator } from '@playwright/test';
+import { BasePage } from '../BasePage';
+
+export class CAJurisdictionPage extends BasePage {
+    // Locators for CA Jurisdictions page
+    private addJurisdictionButton: Locator;
+    private jurisdictionNameField: Locator;
+    private jurisdictionCodeField: Locator;
+
+    constructor(page: Page) {
+        super(page);
+
+        // Initialize locators
+        this.addJurisdictionButton = this.page.locator('button:has-text("Add Jurisdiction")');
+        this.jurisdictionNameField = this.page.locator('input[name*="JurisdictionName"]');
+        this.jurisdictionCodeField = this.page.locator('input[name*="JurisdictionCode"]');
+    }
+
+    /**
+     * Adds a new jurisdiction.
+     * @param jurisdictionData - An object containing the jurisdiction details.
+     */
+    async addJurisdiction(jurisdictionData: {
+        name: string;
+        code: string;
+    }): Promise<void> {
+        this.logger.info('Adding a new jurisdiction');
+
+        // Click the Add Jurisdiction button
+        await this.addJurisdictionButton.click();
+
+        // Fill out the jurisdiction form
+        await this.fillInputField(this.jurisdictionNameField, jurisdictionData.name);
+        await this.fillInputField(this.jurisdictionCodeField, jurisdictionData.code);
+
+        // Save the jurisdiction
+        await this.saveButton.click();
+
+        // Wait for the jurisdiction to be added
+        await this.waitForPageLoad();
+    }
+
+    /**
+     * Verifies that a jurisdiction is present in the list.
+     * @param jurisdictionName - The name of the jurisdiction to verify.
+     */
+    async verifyJurisdictionInList(jurisdictionName: string): Promise<void> {
+        this.logger.info(`Verifying jurisdiction: ${jurisdictionName}`);
+        const jurisdictionRow = this.page.locator(`tr:has-text("${jurisdictionName}")`);
+        await this.verifyElementPresent(jurisdictionRow);
+    }
+} s

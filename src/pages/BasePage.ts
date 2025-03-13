@@ -3,32 +3,60 @@ import { Logger } from '../core/Logger';
 import { ElementHelper } from '../utils/ElementHelper';
 
 export class BasePage extends ElementHelper {
-    // Common selectors in PolicyCenter
-    protected submitButton = 'button:has-text("Submit")';
-    protected cancelButton = 'button:has-text("Cancel")';
-    protected nextButton = 'button:has-text("Next")';
-    protected backButton = 'button:has-text("Back")';
-    protected updateButton = 'button:has-text("Update")';
-    protected addButton = 'button:has-text("Add")';
-    protected editButton = 'button:has-text("Edit")';
-    protected deleteButton = 'button:has-text("Delete")';
+    // Common button locators
+    protected submitButton: Locator;
+    protected cancelButton: Locator;
+    protected nextButton: Locator;
+    protected backButton: Locator;
+    protected updateButton: Locator;
+    protected addButton: Locator;
+    protected editButton: Locator;
+    protected deleteButton: Locator;
+    protected searchButton: Locator;
+    protected createButton: Locator;
+    protected saveButton: Locator;
+    protected okButton: Locator;
 
-    // Error message locators
-    protected errorMessage = '.message.error';
+    // Menu buttons
+    protected actionsButton: Locator;
+    protected newAccountButton: Locator;
+
+    // Error message locator
+    protected errorMessage: Locator;
 
     constructor(page: Page) {
-        // Call the parent class constructor
         super(page);
+
+        // Initialize locators using page.locator()
+        this.submitButton = page.locator('button:has-text("Submit")');
+        this.cancelButton = page.locator('button:has-text("Cancel")');
+        this.nextButton = page.locator('button:has-text("Next")');
+        this.backButton = page.locator('button:has-text("Back")');
+        this.updateButton = page.locator("div[id*='Update'] div[role=button]");
+        this.addButton = page.locator('button:has-text("Add")');
+        this.editButton = page.locator('button:has-text("Edit")');
+        this.deleteButton = page.locator('button:has-text("Delete")');
+        this.searchButton = page.locator("div[id*=SearchLinksInputSet-Search]");
+        this.createButton = page.locator('button:has-text("Create")');
+        this.saveButton = page.locator('button:has-text("Save")');
+        this.okButton = this.page.locator('button:has-text("OK")');
+        this.actionsButton = page.locator("#Desktop-DesktopMenuActions div[role=button]");
+        this.newAccountButton = page.locator("div[id*=DesktopMenuActions_NewAccount] div[role=menuitem]");
+        this.errorMessage = page.locator('.message.error');
     }
 
     /**
-       * Waits for the page to fully load by checking for specific overlays or processing indicators.
-       * Guidewire-specific: Waits for `.gw-page-load-bar--inner` to disappear.
-       */
+ * Waits for the Guidewire page to fully load by checking for `.gw-page-load-bar--inner` style changes.
+ */
     async waitForPageLoad(): Promise<void> {
         this.logger.info('Waiting for Guidewire page to load');
-        await this.page.waitForSelector('.gw-page-load-bar--inner', { state: 'hidden', timeout: 30000 });
+        await this.page.waitForLoadState('networkidle');
+        await this.page.waitForLoadState('domcontentloaded');
+
+        this.logger.info('Page has fully loaded.');
     }
+
+
 
     /**
      * Retrieves the page title.
@@ -59,10 +87,34 @@ export class BasePage extends ElementHelper {
      * @param locator - The locator of the field.
      * @param value - The value to fill.
      */
+    // In BasePage.ts
     async fillInputField(locator: string | Locator, value: string): Promise<void> {
-        const field = typeof locator === 'string' ? this.page.locator(locator) : locator;
         this.logger.info(`Filling field ${locator} with value: ${value}`);
-        await field.fill(value);
+
+        let field = typeof locator === 'string' ? this.page.locator(locator) : locator;
+
+        // Make sure to await this method!
+        await this.waitFor(field, 30000);
+
+        try {
+            // Add retries for stability
+            await field.fill(value, { timeout: 10000 });
+        } catch (error) {
+            this.logger.error(`Failed to fill field: ${locator}`);
+
+            // Try a different approach as fallback
+            await this.page.evaluate(
+                ({ selector, val }) => {
+                    const el = document.querySelector(selector);
+                    if (el) {
+                        (el as HTMLInputElement).value = val;
+                        el.dispatchEvent(new Event('input', { bubbles: true }));
+                        el.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                },
+                { selector: field.toString(), val: value }
+            );
+        }
     }
 
     /**
@@ -74,6 +126,7 @@ export class BasePage extends ElementHelper {
         const dropdown = typeof dropdownLocator === 'string' ? this.page.locator(dropdownLocator) : dropdownLocator;
         const option = typeof optionLocator === 'string' ? this.page.locator(optionLocator) : optionLocator;
         this.logger.info(`Selecting option ${option} from dropdown ${dropdownLocator}`);
+        this.verifyElementPresent(dropdown);
         dropdown.click();
         option.click();
         await this.waitForPageLoad();
@@ -87,6 +140,7 @@ export class BasePage extends ElementHelper {
     async selectOptionByLabel(dropdownLocator: string | Locator, label: string): Promise<void> {
         const dropdown = typeof dropdownLocator === 'string' ? this.page.locator(dropdownLocator) : dropdownLocator;
         this.logger.info(`Selecting option by label: ${label} from dropdown ${dropdownLocator}`);
+        await this.verifyElementPresent(dropdown);
         await dropdown.selectOption({ label });
         await this.waitForPageLoad();
     }
@@ -138,6 +192,34 @@ export class BasePage extends ElementHelper {
         const element = typeof locator === 'string' ? this.page.locator(locator) : locator;
         this.logger.info(`Verifying element present: ${locator}`);
         await expect(element).toBeVisible();
+        // this.highlightElement(element);
+    }
+
+    /**
+  * Highlights an element by modifying its style.
+  * @param locator - The locator of the element to highlight.
+  * @param duration - The duration (in milliseconds) to keep the highlight (default: 2000ms).
+  * @param color - The highlight color (default: 'red').
+  */
+    async highlightElement(locator: string | Locator, duration: number = 2000, color: string = 'red'): Promise<void> {
+        const element = typeof locator === 'string' ? this.page.locator(locator) : locator;
+
+        // Store the original border style
+        const originalStyle = await element.evaluate((el) => {
+            const style = (el as HTMLElement).style.border;
+            (el as HTMLElement).style.border = `2px solid ${color}`;
+            return style;
+        });
+
+        this.logger.info(`Highlighted element with locator: ${locator}`);
+
+        // Wait for the specified duration
+        await this.page.waitForTimeout(duration);
+
+        // Restore the original border style
+        await element.evaluate((el, originalStyle) => {
+            (el as HTMLElement).style.border = originalStyle;
+        }, originalStyle);
     }
 
     /**
@@ -161,6 +243,18 @@ export class BasePage extends ElementHelper {
         const value = await inputField.inputValue();
         this.logger.info(`Retrieved input value: ${value}`);
         return value;
+    }
+
+    /**
+ * Retrieves all options from a <select> dropdown.
+ * @param locator - The locator of the <select> dropdown.
+ * @returns An array of all option texts.
+ */
+    async getDropdownOptions(locator: string | Locator): Promise<string[]> {
+        const dropdown = typeof locator === 'string' ? this.page.locator(locator) : locator;
+        const options = await dropdown.locator('option').allTextContents();
+        this.logger.info(`Retrieved dropdown options: ${options.join(', ')}`);
+        return options;
     }
 
     /**

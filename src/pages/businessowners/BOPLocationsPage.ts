@@ -1,17 +1,25 @@
-import { Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 import { BasePage } from '../BasePage';
 
 export class BOPLocationsPage extends BasePage {
     // Locators for BOP Locations page
-    private addLocationButton = 'button:has-text("Add")';
-    private addressLine1Field = 'input[name*="AddressLine1"]';
-    private cityField = 'input[name*="City"]';
-    private stateDropdown = 'select[name*="State"]';
-    private zipCodeField = 'input[name*="PostalCode"]';
-    private okButton = 'button:has-text("OK")';
+    private addLocationButton: Locator;
+    private addressLine1Field: Locator;
+    private cityField: Locator;
+    private stateDropdown: Locator;
+    private zipCodeField: Locator;
+    private okButton: Locator;
 
     constructor(page: Page) {
         super(page);
+
+        // Initialize locators using page.locator()
+        this.addLocationButton = this.page.locator('button:has-text("Add")');
+        this.addressLine1Field = this.page.locator('input[name*="AddressLine1"]');
+        this.cityField = this.page.locator('input[name*="City"]');
+        this.stateDropdown = this.page.locator('select[name*="State"]');
+        this.zipCodeField = this.page.locator('input[name*="PostalCode"]');
+        this.okButton = this.page.locator('button:has-text("OK")');
     }
 
     /**

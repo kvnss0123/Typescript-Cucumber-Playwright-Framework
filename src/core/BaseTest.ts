@@ -2,6 +2,7 @@ import { test as base, Page } from '@playwright/test';
 import { LoginPage } from '../pages/common/LoginPage';
 import { HeaderPage } from '../pages/common/HeaderPage';
 import { NavigationPage } from '../pages/common/NavigationPage';
+import { AccountPage } from '../pages/common/AccountPage';
 import { DataManager } from '../utils/DataManager';
 import { Logger } from './Logger';
 
@@ -9,6 +10,7 @@ type CustomFixtures = {
     loginPage: LoginPage;
     headerPage: HeaderPage;
     navPage: NavigationPage;
+    accountPage: AccountPage;
     dataManager: DataManager;
     logger: Logger;
     autoLogin: Page;
@@ -29,24 +31,31 @@ export const test = base.extend<CustomFixtures>({
         const navPage = new NavigationPage(page);
         await use(navPage);
     },
-    dataManager: async ({}, use) => {
+    accountPage: async ({ page }, use) => {
+        const accountPage = new AccountPage(page);
+        await use(accountPage);
+    },
+    dataManager: async ({ }, use) => {
         const dataManager = new DataManager();
         await use(dataManager);
     },
-    logger: async ({}, use) => {
+    logger: async ({ }, use) => {
         const logger = new Logger();
         await use(logger);
     },
-    autoLogin: async ({ page, loginPage }, use) => {
+    autoLogin: async ({ page, browser, loginPage }, use) => {
         const dataManager = new DataManager();
         const credentials = await dataManager.getBaseConfig();
 
-        await page.goto("https://gwdemo.ey.com/pc/");
-        await loginPage.login(credentials.username, credentials.password);
+        await page.goto('https://www.google.com');
+        const context = await browser.newContext({
+            viewport: null
+        });
+        await page.evaluate(() => {
+            window.moveTo(0, 0);
+            window.resizeTo(screen.width, screen.height);
+        });
         await use(page);
-    },
-    autoLogout: async ({headerPage}) => {
-        await headerPage.logout();
     }
 });
 
