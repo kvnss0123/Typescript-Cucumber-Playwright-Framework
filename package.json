@@ -1,29 +1,49 @@
 {
-  "name": "playwright_framework_guidewire_policycenter",
-  "version": "1.0.0",
-  "description": "Playwright Testing Framework for Guidewire PolicyCenter",
-  "main": "index.js",
-  "scripts": {
-    "test": "npx playwright test",
-    "test:bop": "npx playwright test tests/businessowners/",
-    "test:ca": "npx playwright test tests/commercialAuto/",
-    "report": "npx playwright show-report"
-  },
-  "keywords": [
-    "playwright",
-    "guidewire",
-    "policycenter",
-    "testing"
-  ],
-  "dependencies": {
-    "@faker-js/faker": "^8.4.1",
-    "@playwright/test": "^1.40.0",
-    "js-yaml": "^4.1.0",
-    "playwright_framework_guidewire_policycenter": "file:",
-    "winston": "^3.11.0"
-  },
-  "devDependencies": {
-    "@types/js-yaml": "^4.0.9",
-    "typescript": "^5.3.2"
-  }
+    "name": "playwright-cucumber-framework",
+    "version": "1.0.0",
+    "description": "Playwright TypeScript Cucumber Test Automation Framework",
+    "main": "index.js",
+    "scripts": {
+        "test": "cucumber-js",
+        "test:chrome": "BROWSER=chrome cucumber-js",
+        "test:firefox": "BROWSER=firefox cucumber-js",
+        "report": "allure generate reports/allure-results --clean -o reports/allure-report",
+        "test:safari": "cucumber-js -p safari",
+        "lint": "eslint . --ext .ts",
+        "lint:fix": "eslint . --ext .ts --fix",
+        "format": "prettier --write \"src/**/*.ts\"",
+        "clean": "rm -rf allure-results allure-report"
+    },
+    "keywords": [
+        "playwright",
+        "cucumber",
+        "typescript",
+        "test-automation"
+    ],
+    "author": "Your Name",
+    "license": "ISC",
+    "devDependencies": {
+        "@cucumber/cucumber": "^8.11.1",
+        "@playwright/test": "^1.51.1",
+        "@types/chai": "^5.2.1",
+        "@types/cucumber": "^6.0.1",
+        "@types/dotenv": "^6.1.1",
+        "@types/node": "^18.19.84",
+        "@typescript-eslint/eslint-plugin": "^5.x.x",
+        "@typescript-eslint/parser": "^5.x.x",
+        "allure-commandline": "^2.x.x",
+        "allure-playwright": "^2.x.x",
+        "chai": "^5.2.0",
+        "eslint": "^8.x.x",
+        "eslint-config-prettier": "^8.x.x",
+        "eslint-plugin-playwright": "^0.x.x",
+        "prettier": "^2.x.x",
+        "ts-node": "^10.9.2",
+        "typescript": "^4.9.5",
+        "yaml": "^2.7.0"
+    },
+    "dependencies": {
+        "js-yaml": "^4.1.0",
+        "playwright-cucumber-framework": "file:"
+    }
 }

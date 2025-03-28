@@ -1,0 +1,9 @@
+login_page:
+  username_input: '#username'
+  password_input: '#password'
+  login_button: 'button[type="submit"]'
+  error_message: '.error-message'
+
+dashboard:
+  welcome_text: '.welcome-header'
+  logout_button: '#logout-btn'

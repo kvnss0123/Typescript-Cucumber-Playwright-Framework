@@ -1,0 +1,21 @@
+{
+    "default": {
+        "formatOptions": {
+            "snippetInterface": "async-await"
+        },
+        "paths": [
+            "features/**/*.feature"
+        ],
+        "require": [
+            "src/steps/**/*.ts",
+            "src/supports/**/*.ts"
+        ],
+        "format": [
+            "progress",
+            "html:reports/cucumber-report.html",
+            "json:reports/cucumber-report.json"
+        ],
+        "parallel": 2,
+        "retry": 1
+    }
+}
